@@ -181,7 +181,7 @@ You can generate a PDF or an HTML copy of this guide using
       Mailer.deliver(to: 'bob@example.com', from: 'us@example.com', subject: 'Important message', body: source.text)
     end
 
-    # bad (normal indent)
+    # bad
     def send_mail(source)
       Mailer.deliver(
         to: 'bob@example.com',
@@ -190,21 +190,28 @@ You can generate a PDF or an HTML copy of this guide using
         body: source.text)
     end
 
-    # bad (double indent)
-    def send_mail(source)
-      Mailer.deliver(
-          to: 'bob@example.com',
-          from: 'us@example.com',
-          subject: 'Important message',
-          body: source.text)
-    end
-
     # good
     def send_mail(source)
       Mailer.deliver(to: 'bob@example.com',
                      from: 'us@example.com',
                      subject: 'Important message',
                      body: source.text)
+    end
+
+    # good
+    def send_mail(source)
+      Mailer.deliver(
+        to: 'bob@example.com',
+        from: 'us@example.com',
+        subject: 'Important message',
+        body: source.text
+      )
+    end
+
+    # good (only if parameter is few)
+    def send_mail(source)
+      Mailer.deliver(to: 'bob@example.com', from: 'us@example.com',
+        subject: 'Important message', body: source.text)
     end
     ```
 
@@ -246,13 +253,16 @@ You can generate a PDF or an HTML copy of this guide using
     arr.each { |elem| puts elem }
     ```
 
-* Never use `then` for multi-line `if/unless`.
+* Never use `then` for multi-line `if/unless` and single-line `if/unless`.
 
     ```Ruby
     # bad
     if some_condition then
       # body omitted
     end
+
+    # bad
+    if some_condition then puts 'anything' end
 
     # good
     if some_condition
@@ -330,11 +340,11 @@ You can generate a PDF or an HTML copy of this guide using
       do_something
     end
 
+    # bad
+    some_condition and do_something
+
     # good
     do_something if some_condition
-
-    # another good option
-    some_condition and do_something
     ```
 
 * Favor `unless` over `if` for negative conditions (or control
@@ -347,7 +357,7 @@ You can generate a PDF or an HTML copy of this guide using
     # good
     do_something unless some_condition
 
-    # another good option
+    # bad
     some_condition or do_something
     ```
 
@@ -356,6 +366,7 @@ You can generate a PDF or an HTML copy of this guide using
     ```Ruby
     # bad
     unless success?
+      # some error handling
       puts 'failure'
     else
       puts 'success'
@@ -365,8 +376,27 @@ You can generate a PDF or an HTML copy of this guide using
     if success?
       puts 'success'
     else
+      # some error handling
       puts 'failure'
     end
+    ```
+
+* Favor `if/unless` returns value if same action in else block.
+
+    ```Ruby
+    # bad
+    if proceed?
+      message = 'process finished'
+    else
+      message = 'failed process cause of ...'
+    end
+
+    # good
+    message = if proceed?
+                'process finished'
+              else
+                'failed process cause of ...'
+              end
     ```
 
 * Don't use parentheses around the condition of an `if/unless/while`,
@@ -401,6 +431,9 @@ You can generate a PDF or an HTML copy of this guide using
 
     # good
     do_something while some_condition
+
+    # better
+    # disuse
     ```
 
 * Favor `until` over `while` for negative conditions.
@@ -618,8 +651,11 @@ syntax.
     # bad
     hash = { :one => 1, :two => 2 }
 
-    # good
+    # bad
     hash = { one: 1, two: 2 }
+
+    # good
+    hash = {one: 1, two: 2}
     ```
 
 * Use the new lambda literal syntax.
